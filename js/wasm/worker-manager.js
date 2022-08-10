@@ -1,6 +1,6 @@
 "use strict";
 
-import {term} from './index.js';
+import {term} from '/index.js';
 
 export class WorkerManager {
     constructor(workerURL, standardIO) {
@@ -10,14 +10,17 @@ export class WorkerManager {
                 this.resolveWorkerReady(true);
             }
             else if (type === 'stdout') {
-                console.log(event.data.stdout);
+                //console.log(event.data.stdout);
                 //this.standardIO.stdout(event.data.stdout);
                 term.write(event.data.stdout+"\r");
             }
             else if (type === 'stderr') {
-                console.log(event.data.stderr);
-                //this.standardIO.stderr(event.data.stderr);
-                term.write("\r\n" + event.data.stderr);
+                //console.log(event.data.stderr);
+                let str = event.data.stderr;
+                let result = str.replace(/\n/g, "\r\n");
+                //console.log(result);
+                //this.standardIO.stderr(event.data.stderr);                
+                term.write(result+ "\n");
             }
             else if (type === 'stdin') {
                 // Leave it to the terminal to decide whether to chunk it into lines

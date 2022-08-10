@@ -51,7 +51,7 @@ const stdin = {
 
 const run = async (code) => {
     try {
-        console.log(code);    
+        //console.log(code);    
         pyodide.runPython(code);
     } catch (err) {
         postMessage({
@@ -88,8 +88,7 @@ const initialise = async () => {
 
 initialise();
 
-onmessage = function (e) {
-    console.log("1111");
+onmessage = function (e) {    
     console.log(e.data.type);
     switch (e.data.type) {
         case 'run':

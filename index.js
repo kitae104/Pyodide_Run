@@ -1,4 +1,4 @@
-import { WorkerManager } from "./worker-manager.js";
+import { WorkerManager } from "/js/wasm/worker-manager.js";
 
 //import "./style.css";
 
@@ -17,7 +17,7 @@ window.onload = () => {
         
 
   function clear(){    
-    code.value='';        
+    editor.getDoc().setValue('');  
     term.clear();
     term.prompt();
   }
@@ -46,7 +46,7 @@ window.onload = () => {
   clearButton.removeAttribute('disabled')
   
   
-  const pyodideWorker = new WorkerManager('./worker/python-worker.js', stdio);
+  const pyodideWorker = new WorkerManager('/js/worker/python-worker.js', stdio);
 };
 
 
@@ -56,38 +56,38 @@ window.onload = () => {
 
   term.prompt = () => {
     term.write(''); 
-
+    //term.setOption('cursorBlink', true);
   }
   term.prompt();  
 
   var cmd = '';
 
-  term.on('key', function (key, ev) {  
-    var printable = (
-      !ev.altKey && !ev.altGraphKey && !ev.ctrlKey && !ev.metaKey
-    );
+  // term.on('key', function (key, ev) {  
+  //   var printable = (
+  //     !ev.altKey && !ev.altGraphKey && !ev.ctrlKey && !ev.metaKey
+  //   );
     
-    if (ev.keyCode == 13) {
-      if(cmd === 'clear')
-      {
-        term.clear();
-      }
-      cmd = '';
-      term.prompt();
-    } else if (ev.keyCode == 8) {    
+  //   if (ev.keyCode == 13) {
+  //     if(cmd === 'clear')
+  //     {
+  //       term.clear();
+  //     }
+  //     cmd = '';
+  //     term.prompt();
+  //   } else if (ev.keyCode == 8) {    
       
-      console.log(cmd.length);
-      if (cmd.length > 0) {
-        cmd = cmd.slice(0, cmd.length -1);
-        term.write('\b \b');
-      }
+  //     console.log(cmd.length);
+  //     if (cmd.length > 0) {
+  //       cmd = cmd.slice(0, cmd.length -1);
+  //       term.write('\b \b');
+  //     }
       
-    } else if (printable) {
-      cmd += key;               // 입력된 키를 가지고 명령어 확인 
-      term.write(key);
-    }
-  });
+  //   } else if (printable) {
+  //     cmd += key;               // 입력된 키를 가지고 명령어 확인 
+  //     term.write(key);
+  //   }
+  // });
         
-  term.on('paste', function (data, ev) {
-    term.write(data);
-  });
+  // term.on('paste', function (data, ev) {
+  //   term.write(data);
+  // });
