@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "xterm": "^4.19.0",
+    "xterm-addon-web-links": "^0.6.0"
+  }
+}
