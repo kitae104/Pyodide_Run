@@ -53,6 +53,9 @@ const run = async (code) => {
     try {
         //console.log(code);    
         pyodide.runPython(code);
+        // pandastutor
+        //const executionTrace = pandastutor_py.run_user_code(code);  
+
     } catch (err) {
         postMessage({
         type: 'stderr',
@@ -66,13 +69,23 @@ const run = async (code) => {
     
 const initialise = async () => {
     console.log("initialise>>>");
-    importScripts('https://cdn.jsdelivr.net/pyodide/v0.19.0/full/pyodide.js')
+    importScripts('https://cdn.jsdelivr.net/pyodide/v0.21.0/full/pyodide.js');
 
-        // @ts-ignore
-        pyodide = await loadPyodide({
-            fullStdLib: false,
-            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.19.0/full/',       
-        });
+    // @ts-ignore
+    pyodide = await loadPyodide({
+        fullStdLib: false,
+        indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.21.0/full/',       
+    });
+    
+    // 패키지 로딩
+    await pyodide.loadPackage(["pandas", "micropip"]);
+    const micropip = pyodide.pyimport("micropip");
+    await micropip.install("https://files.pythonhosted.org/packages/ca/91/6d9b8ccacd0412c08820f72cebaa4f0c0441b5cda699c90f618b6f8a1b42/requests-2.28.1-py3-none-any.whl");
+    await micropip.install("https://files.pythonhosted.org/packages/d1/cb/4783c8f1a90f89e260dbf72ebbcf25931f3a28f8f80e2e90f8a589941b19/urllib3-1.26.11-py2.py3-none-any.whl");
+    
+    // pandastutor
+    //const pandastutor_py = await pyodide.pyimport("pandas_tutor.main");   
+
     postMessage({
         type: 'ready',
     });
