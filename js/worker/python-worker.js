@@ -82,6 +82,7 @@ const initialise = async () => {
     const micropip = pyodide.pyimport("micropip");
     await micropip.install("https://files.pythonhosted.org/packages/ca/91/6d9b8ccacd0412c08820f72cebaa4f0c0441b5cda699c90f618b6f8a1b42/requests-2.28.1-py3-none-any.whl");
     await micropip.install("https://files.pythonhosted.org/packages/d1/cb/4783c8f1a90f89e260dbf72ebbcf25931f3a28f8f80e2e90f8a589941b19/urllib3-1.26.11-py2.py3-none-any.whl");
+    await micropip.install("https://files.pythonhosted.org/packages/10/5b/0479d7d845b5ba410ca702ffcd7f2cd95a14a4dfff1fde2637802b258b9b/seaborn-0.11.2-py3-none-any.whl");
     
     // pandastutor
     //const pandastutor_py = await pyodide.pyimport("pandas_tutor.main");   
