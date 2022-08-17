@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.21.0/full/pyodide.js"></script>
+  </head>
+
+  <body>
+    <p>
+      You can execute any Python code. Just enter something in the box below and
+      click the button.
+    </p>
+    <input id="code" value="sum([1, 2, 3, 4, 5])" />
+    <button onclick="evaluatePython()">Run</button>
+    <br />
+    <br />
+    <div>Output:</div>
+    <textarea id="output" style="width: 100%;" rows="6" disabled></textarea>
+
+    <script>
+      const output = document.getElementById("output");
+      const code = document.getElementById("code");
+
+      function addToOutput(s) {
+        output.value += ">>>" + code.value + "\n" + s + "\n";
+      }
+
+      output.value = "Initializing...\n";
+      // init Pyodide      
+
+      async function main() {
+        globalThis.pyodide = await loadPyodide();        
+
+        output.value += "Ready!\n";
+        return pyodide;
+      }
+      let pyodideReadyPromise = main();
+
+      async function evaluatePython() {   
+
+        try {
+          // 테스트 후 블록 생성시에 해당 코드 호출해서 백그라운드에서 로딩하도록 함
+          await myLoadPackages(code.value);    // 패키지 인경우 (from 혹은 import로 시작하는 경우 이거 사용)
+
+          let output = pyodide.runPython(code.value); // 일반 코드인 경우 이거 사용 
+          addToOutput(output);
+        } catch (err) {
+          addToOutput(err);
+        }
+      }
+
+      async function myLoadPackages(package){
+        let namespace = pyodide.globals.get("dict")();
+
+          pyodide.runPython(
+          `
+            import sys            
+            from pyodide.console import PyodideConsole
+            import __main__            
+            pyconsole = PyodideConsole(__main__.__dict__)            
+          `,
+          { globals: namespace }
+          );
+
+          let await_fut = namespace.get("await_fut");
+          let pyconsole = namespace.get("pyconsole");
+          let fut = pyconsole.push(package);    
+          let wrapped = await_fut(fut);    
+          let [value] = await wrapped;    
+      }
+    </script>
+  </body>
+</html>

@@ -130,7 +130,8 @@
           term.pause();
           // multiline should be split (useful when pasting)
           for (const c of command.split("\n")) {
-            let fut = pyconsole.push(c);
+            console.log("c ==> " + c);
+            let fut = pyconsole.push(c);            
             term.set_prompt(fut.syntax_check === "incomplete" ? ps2 : ps1);
             switch (fut.syntax_check) {
               case "syntax-error":
@@ -147,10 +148,11 @@
             // awaits, so if an async function returns a future, it will await
             // the inner future too. This is not what we want so we
             // temporarily put it into a list to protect it.
-            let wrapped = await_fut(fut);
+            let wrapped = await_fut(fut);        
+            
             // complete case, get result / error and print it.
             try {
-              let [value] = await wrapped;
+              let [value] = await wrapped;              
               if (value !== undefined) {
                 echo(
                   repr_shorten.callKwargs(value, {
@@ -159,6 +161,7 @@
                 );
               }
               if (pyodide.isPyProxy(value)) {
+                
                 value.destroy();
               }
             } catch (e) {
