@@ -28,6 +28,16 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css"
     />
+
+    <!-- 여기 추가!!! -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldgutter.min.css" integrity="sha512-YwkMTlTHn8dBnwa47IF+cKsS00HPiiVhQ4DpwT1KF2gUftfFR7aefepabSPLAs6zrMyD89M3w0Ow6mQ5XJEUCw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldgutter.min.js" integrity="sha512-kEVEkqJPlijyiRihpbPuhIW6wkb5wcEaVsfYm/utqn8ToMspk7E2fK5UyZ2HdnJnA4/0HyQwqeKzHNuPm+zyCw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/foldcode.min.js" integrity="sha512-Q2qfEJEU257Qlqc4/5g6iKuJNnn5L0xu2D48p8WHe9YC/kLj2UfkdGD01qfxWk+XIcHsZngcA8WuKcizF8MAHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/brace-fold.min.js" integrity="sha512-5MuaB1PVXvhsYVG0Ozb0bwauN7/D1VU4P8dwo5E/xiB9SXY+VSEhIyxt1ggYk2xaB/RKqKL7rPXpm1o1IlTQDA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/indent-fold.min.js" integrity="sha512-Q6g5qQfa6ko+Y+0BwAciUAq01qxgfScTPFP2Fsrr+zIrTe5Yq3tN5xaA919MmBs/1RMz/jyctknYavjc3k+/xg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script> 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/fold/comment-fold.min.js" integrity="sha512-POq5oizlc/SrDJVaPG9eRo020t5igLlyXnOEPl854IgtRDnRCi9D3RAdOS1dhZ3Y0SmcyDVwyt2z2uFj3WYcbg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
     <script
       src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"
       integrity="sha512-2M0GdbU5OxkGYMhakED69bw0c1pW3Nb0PeF3+9d+SnwN1ryPx3wiDdNqK3gSM7KAU/pEV+2tFJFbMKjKAahOkQ=="
@@ -81,6 +91,7 @@
     <script type="text/javascript">
       var editor = CodeMirror.fromTextArea(document.getElementById("code"), {
         autofocus: true,
+        mode:"python",
         theme: "dracula",
         lineWrapping: true,
         lineNumbers: true,
@@ -89,8 +100,11 @@
 
         extraKeys: {
           "Ctrl-Space": "autocomplete",
+          "Ctrl-Q": function(cm){ cm.foldCode(cm.getCursor()); },
         },
         hint: CodeMirror.hint.pythonHint,
+        foldGutter: true,
+        gutters: ["CodeMirror-linenumbers", "CodeMirror-foldgutter"]
       });
 
       // editor.on("keyup", function (editor, event) {
