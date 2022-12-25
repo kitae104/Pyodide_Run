@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>    
+  </head>
+  <body>
+    <h1>Run Test</h1>
+    <p>파이오다이드(Pyodide) 출력 및 입력 테스트 페이지 입니다.</p>
+    <textarea id="code" style="width: 50%;" rows="10"></textarea>    
+    <div class="button-container">
+      <button id="run" onclick="evaluatePython()">Run</button>
+      <button id="repl">REPL</button>
+      <button id="clear">Clear</button>
+    </div>
+    <br>
+    <div>결과 : </div>
+    <textarea id="output" style="width: 50%;" rows="6" disabled></textarea>
+    <div id="terminal"></div>
+  </body>
+</html>

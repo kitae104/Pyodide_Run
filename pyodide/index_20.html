@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+  </head>
+  <body>
+    <h2>Runtime Test</h2>
+    <textarea id="code" style="width: 50%;" rows="10"></textarea>
+    <br>
+    <button id="run" onclick="execute_code()">RUN</button>
+    <button id="clear">Clear</button>
+    <br>
+    <br>
+    <textarea id="output" style="width: 50%;" rows="10" disabled></textarea>
+    <script>
+        
+        let output = document.getElementById("output");
+        const code = document.getElementById("code");
+        
+        document.getElementById("clear").addEventListener('click',clear);
+
+        function addToOutput(s) {
+          output.value += ">>>" + code.value + "\n" + s + "\n";
+        }
+
+        async function main() {
+          let pyodide = await loadPyodide();    
+          pyodide.loadPackage(["matplotlib","opencv-python", "numpy"]);      
+          return pyodide;
+        }
+
+        let pyodideReadyPromise = main();
+
+        async function execute_code() {            
+            let pyodide = await pyodideReadyPromise;
+            try{
+              let output = pyodide.runPython(code.value);
+              console.log(output);
+              addToOutput(output);
+            } catch(err){
+              addToOutput(err);
+            }
+        }
+
+        function clear(){          
+          output.value='';
+        }
+    </script>
+  </body>
+</html>

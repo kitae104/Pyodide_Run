@@ -1,0 +1,67 @@
+<!--
+  pyodide 18 버전 테스트용 - 17버전 복제
+  live server로 실행하면 된다.
+-->
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.18.0/full/pyodide.js"></script>
+</head>
+
+<body>
+  <p>You can execute any Python code. Just enter something in the box below and click the button.</p>
+  <input id='code' value='sum([1, 2, 3, 4, 5])'>
+  <button onclick='evaluatePython()'>Run</button>
+  <br>
+  <br>
+  <div>
+    Output:
+  </div>
+  <textarea id='output' style='width: 100%;' rows='6' disabled></textarea>
+  <div id="pyplotdiv"><img id="pyplotfigure"/></div>
+  <script>
+    const output = document.getElementById("output");
+    const code = document.getElementById("code");
+
+    function addToOutput(s) {
+      output.value += '>>>' + code.value + '\n' + s + '\n';
+    }
+
+    output.value = 'Initializing...\n';
+    // init Pyodide
+    async function main(){
+      await loadPyodide({ indexURL : 'https://cdn.jsdelivr.net/pyodide/v0.18.0/full/' });
+      // 라이브러리 import
+      await pyodide.loadPackage(['matplotlib','numpy']);
+      output.value += 'Ready!\n';
+      
+      
+    }
+    let pyodideReadyPromise = main();
+    pyodideReadyPromise.then(() => {
+      pyodide.runPython(`
+import matplotlib.pyplot as plt
+import io, base64
+fig, ax = plt.subplots()
+ax.plot([1,3,2])
+buf = io.BytesIO()
+fig.savefig(buf, format='png')
+buf.seek(0)
+img_str = 'data:image/png;base64,' + base64.b64encode(buf.read()).decode('UTF-8')
+		  `);
+      document.getElementById("pyplotfigure").src=pyodide.globals.img_str
+    });
+    async function evaluatePython() {
+      await pyodideReadyPromise;
+      try {
+        let output = await pyodide.runPython(code.value);
+        console.log(output);
+        addToOutput(output);
+      } catch(err) {
+        addToOutput(err);
+      }
+    }
+  </script>
+</body>
+
+</html>

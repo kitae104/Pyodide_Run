@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="node_modules/xterm/css/xterm.css" />
+    <script type="module" src="node_modules/xterm/lib/xterm.js"></script>
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
+    
+  </head>
+  <body>
+    <h1>Run Test</h1>
+    <p>파이오다이드(Pyodide) 출력 및 입력 테스트 페이지 입니다.</p>
+    <textarea id="code" style="width: 50%;" rows="10"></textarea>    
+    <div class="button-container">
+      <button id="run" onclick="evaluatePython()">Run</button>
+      <button id="repl">REPL</button>
+      <button id="clear">Clear</button>
+    </div>
+    <br>
+    <div>결과 : </div>
+    <textarea id="output" style="width: 50%;" rows="6" disabled></textarea>
+    <div id="terminal"></div>
+
+<script>
+
+class WasmTerminalConfig {
+    constructor({ fetchCommand, processWorkerUrl, }) {
+        this.fetchCommand = fetchCommand;
+        this.processWorkerUrl = processWorkerUrl;
+    }
+}
+
+class WasmTerminal {
+    constructor(config) {
+        /**
+         * Handle terminal resize
+         *
+         * This function clears the prompt using the previous configuration,
+         * updates the cached terminal size information and then re-renders the
+         * input. This leads (most of the times) into a better formatted input.
+         */
+        this.handleTermResize = (data) => {
+            const { rows, cols } = data;
+            this.wasmTty.clearInput();
+            this.wasmTty.setTermSize(cols, rows);
+            this.wasmTty.setInput(this.wasmTty.getInput(), true);
+        };
+        this.wasmTerminalConfig = new WasmTerminalConfig(config);
+        // Create our xterm element
+        this.xterm = new Terminal({ scrollback: 10000, fontSize: 14, theme: { background: '#1a1c1f' }, cols: 100 });
+        // tslint:disable-next-line
+        // this.pasteEvent = this.xterm.on("paste", this.onPaste);
+        // tslint:disable-next-line
+        this.resizeEvent = this.xterm.onResize(this.handleTermResize);
+        this.xterm.onKey((keyEvent) => {
+            // Fix for iOS Keyboard Jumping on space
+            if (keyEvent.key === " ") {
+                keyEvent.domEvent.preventDefault();
+            }
+        });
+        // Set up our container
+        this.container = undefined;
+        // Load our addons
+        this.webLinksAddon = new WebLinksAddon();
+        this.fitAddon = new FitAddon();
+        this.xterm.loadAddon(this.fitAddon);
+        this.xterm.loadAddon(this.webLinksAddon);
+        this.wasmTerminalConfig = new WasmTerminalConfig(config);
+        // Create our Shell and tty
+        this.wasmTty = new WasmTty(this.xterm);
+        this.wasmShell = new WasmShell(this.wasmTerminalConfig, this.wasmTty, {
+            disablePrompt: false,
+        });
+        // tslint:disable-next-line
+        this.dataEvent = this.xterm.onData(this.wasmShell.handleTermData);
+        this.isOpen = false;
+        this.pendingPrintOnOpen = "";
+    }
+    open(container) {
+        // Remove any current event listeners
+        const focusHandler = this.focus.bind(this);
+        if (this.container !== undefined) {
+            MOBILE_KEYBOARD_EVENTS.forEach((eventName) => {
+                this.container.removeEventListener(eventName, focusHandler);
+            });
+        }
+        this.container = container;
+        this.xterm.open(container);
+        this.isOpen = true;
+        setTimeout(() => {
+            // Fix for Mobile Browsers and their virtual keyboards
+            if (this.container !== undefined) {
+                MOBILE_KEYBOARD_EVENTS.forEach((eventName) => {
+                    this.container.addEventListener(eventName, focusHandler);
+                });
+            }
+            if (this.pendingPrintOnOpen) {
+                this.wasmTty.print(this.pendingPrintOnOpen + "\n");
+                this.pendingPrintOnOpen = "";
+            }
+        });
+    }
+    fit() {
+        this.fitAddon.fit();
+    }
+    clear() {
+        this.xterm.clear();
+    }
+    focus() {
+        this.xterm.focus();
+    }
+    print(message, sync) {
+        // For some reason, double new lines are not respected. Thus, fixing that here
+        message = message.replace(/\n\n/g, "\n \n");
+        if (!this.isOpen) {
+            if (this.pendingPrintOnOpen) {
+                this.pendingPrintOnOpen += message;
+            }
+            else {
+                this.pendingPrintOnOpen = message;
+            }
+            return;
+        }
+        if (this.wasmShell.isPrompting()) {
+            // Cancel the current prompt and restart
+            this.wasmShell.printAndRestartPrompt(() => {
+                this.wasmTty.print(message + "\n", sync);
+                return undefined;
+            });
+            return;
+        }
+        this.wasmTty.print(message, sync);
+    }
+    kill() {
+        // return this.wasmShell.commandRunner?.kill();
+    }
+    destroy() {
+        this.xterm.dispose();
+        delete this.xterm;
+    }
+    onPaste(data) {
+        this.wasmTty.print(data);
+    }
+}
+
+const consoleCode = `
+import code
+code.interact()
+`
+const runButton = document.getElementById('run')
+const replButton = document.getElementById('repl')
+const clearButton = document.getElementById('clear')
+
+window.onload = () => {
+    const config = new WasmTerminalConfig({ fetchCommand: null, processWorkerUrl: '' });
+    const terminal = new WasmTerminal(config);
+    terminal.open(document.getElementById('terminal'));
+    const stdio = {
+        stdout: (s) => { terminal.print(s); },
+        stderr: (s) => { terminal.print(s); },
+        stdin: () => __awaiter(void 0, void 0, void 0, function* () {
+            return yield terminal.wasmShell.prompt();
+        })
+    };
+    runButton.addEventListener('click', (e) => {
+        const code = document.getElementById('code').value;
+        pythonWorkerManager.runCode(code);
+    });
+    runButton.removeAttribute('disabled');
+    replButton.addEventListener('click', (e) => {
+        pythonWorkerManager.runCode(consoleCode);
+    });
+    replButton.removeAttribute('disabled');
+    clearButton.addEventListener('click', (e) => {
+        terminal.clear();
+    });
+    clearButton.removeAttribute('disabled');
+    //const pythonWorkerManager = new WorkerManager('/python-webworker.js', stdio);
+};
+</script>
+
+  </body>
+</html>
