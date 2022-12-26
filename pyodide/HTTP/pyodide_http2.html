@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pyodide-HTTP 예제</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js" crossorigin="*"></script>
+  <script>   
+
+    async function main() {
+    let pyodide = await loadPyodide(); 
+    console.log(
+      pyodide.runPython(`
+          import sys
+          sys.version                  
+      `)
+    );
+    await await pyodide.loadPackage(["micropip", "beautifulsoup4"]);
+    const micropip = pyodide.pyimport("micropip");   
+    await micropip.install("pyodide_http");
+    await micropip.install("requests");
+    pyodide.runPython(`    
+    import pyodide_http
+    import base64
+    from bs4 import BeautifulSoup
+
+    pyodide_http.patch_all()  # Patch all libraries
+    
+    import requests
+    #data = requests.get("http://127.0.0.1:5500/HTTP/test.md")
+    #data = requests.get("http://127.0.0.1:5500/HTTP/passby_data.csv")
+    data = requests.get("http://127.0.0.1:5500/HTTP/pyscript.html")
+
+    html = data.text
+    soup = BeautifulSoup(html, 'html.parser')
+    ul = soup.select_one('#image-wrapper')
+    print(ul.text)
+
+
+    
+      `);
+    }
+    main();
+  </script>
+</head>
+<body>
+  <div id="image-wrapper">Pyodide image should show here...</div>
+</body>
+</html>

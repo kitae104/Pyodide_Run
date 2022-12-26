@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pyodide-HTTP 예제</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js" crossorigin=""></script>
+  <script>   
+
+    async function main() {
+    let pyodide = await loadPyodide(); 
+    console.log(
+      pyodide.runPython(`
+          import sys
+          sys.version                  
+      `)
+    );
+    await await pyodide.loadPackage("micropip");
+    const micropip = pyodide.pyimport("micropip");   
+    await micropip.install("pyodide_http");
+    await micropip.install("requests");
+    pyodide.runPython(`    
+    import pyodide_http
+    import base64
+    pyodide_http.patch_all()  # Patch all libraries
+    
+    import requests
+    # data = requests.get("https://raw.githubusercontent.com/pyodide/pyodide/main/docs/_static/img/pyodide-logo-readme.png")
+    data = requests.get("https://ssl.pstatic.net/melona/libs/1424/1424907/e4909f17c89b43066755_20221201140432618.jpg")
+    print(data);
+
+    from js import document
+    img = document.createElement("img")
+    img.src = "data:image/png;base64," + base64.b64encode(data.content).decode()
+    wrapper = document.getElementById("image-wrapper")
+    wrapper.appendChild(img)
+      `);
+    }
+    main();
+  </script>
+</head>
+<body>
+  <div id="image-wrapper">Pyodide image should show here...</div>
+</body>
+</html>

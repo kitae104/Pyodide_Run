@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>pytest 예제</title>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.21.0/full/pyodide.js"></script>
+  <script>
+    async function main() {
+    let pyodide = await loadPyodide();
+    console.log(
+      pyodide.runPython(`
+          import sys
+          sys.version
+      `)
+    );
+    await await pyodide.loadPackage(["micropip"]);
+    const micropip = pyodide.pyimport("micropip");   
+    await micropip.install("https://files.pythonhosted.org/packages/02/71/cb373c543b97f96bec25113ad1e8f678dd6ea2bf36c87d52f2e9c6460f69/pytest_pyodide-0.23.2-py3-none-any.whl");
+    pyodide.runPython(`    
+    from pytest_pyodide import run_in_pyodide
+    @run_in_pyodide
+    def test_add(selenium):
+      assert 1 + 1 == 2
+
+      `);
+    }
+    main();
+  </script>
+</head>
+<body>
+  
+</body>
+</html>
