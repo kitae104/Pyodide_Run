@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+  </head>
+  <body>
+    Pyodide test page <br>
+    Open your browser console to see Pyodide output
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        console.log(pyodide.runPython(`
+            import sys
+            sys.version
+        `));
+        await pyodide.loadPackage("numpy");
+        pyodide.runPython(`
+          import numpy
+          x=numpy.ones((3, 4))
+          print(x)
+        `);
+        let x = pyodide.globals.get('x').toJs();
+        console.log(x);
+
+        // re-assign a new value to an existing variable
+        pyodide.globals.set("x", 'x will be now string');
+
+        // add the js "alert" function to the Python global scope
+        // this will show a browser alert if called from Python
+        pyodide.globals.set("alert", alert);
+
+        // add a "square" function to Python global scope
+        pyodide.globals.set("square", x => x*x);
+
+        // Test the new "square" Python function
+        pyodide.runPython(`
+          res = square(3)
+          print(res)
+          alert(res)
+        `);
+
+        // 파이썬으로 자바 스크립트에 처리하기 
+        pyodide.runPython(`
+          import js
+          div = js.document.createElement("div")
+          div.innerHTML = "<h1>This element was created from Python</h1>"
+          js.document.body.prepend(div)
+        `);
+      }
+      main();
+    </script>
+  </body>
+</html>
