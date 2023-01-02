@@ -1,0 +1,36 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+  </head>
+  <body>
+    Pyodide test page <br>
+    Open your browser console to see Pyodide output
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        console.log(pyodide.runPython(`
+            import sys
+            sys.version
+        `));
+        
+        await pyodide.loadPackage(["numpy"]);  
+
+        self.jsarray = new Float32Array([10, 20, 30, 40, 50, 60]);   // JS 배열 
+
+        pyodide.runPython(`
+        from js import jsarray
+        array = jsarray.to_py()                           # 
+        import numpy as np 
+        numpy_array = np.asarray(array).reshape((2,3))
+        numpy_array[1,1] = 77
+        jsarray.assign(numpy_array)
+        print(numpy_array)
+        `);    
+        
+        console.log(jsarray);
+      }
+      main();
+    </script>
+  </body>
+</html>

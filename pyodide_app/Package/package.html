@@ -1,0 +1,32 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+    <script type="text/javascript">
+      async function main() {
+        let pyodide = await loadPyodide();
+        await pyodide.loadPackage("micropip");
+        await pyodide.loadPackage("numpy");
+        await pyodide.loadPackage("https://files.pythonhosted.org/packages/ca/91/6d9b8ccacd0412c08820f72cebaa4f0c0441b5cda699c90f618b6f8a1b42/requests-2.28.1-py3-none-any.whl");
+        await pyodide.loadPackage("https://files.pythonhosted.org/packages/65/0c/cc6644eaa594585e5875f46f3c83ee8762b647b51fc5b0fb253a242df2dc/urllib3-1.26.13-py2.py3-none-any.whl");
+        const micropip = pyodide.pyimport("micropip");
+        await micropip.install("snowballstemmer");
+        await micropip.install("requests");
+        await micropip.install("urllib3");
+        await pyodide.runPython(`
+        import snowballstemmer
+        stemmer = snowballstemmer.stemmer('english')
+        print(stemmer.stemWords('go goes going gone'.split()))
+        import urllib3
+        import requests
+
+        print(urllib3.__version__)
+        print(requests.__version__)
+      `);
+      }
+      main();
+    </script>
+  </body>
+</html>

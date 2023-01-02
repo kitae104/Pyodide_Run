@@ -1,0 +1,27 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+  </head>
+  <body>
+    Pyodide test page <br>
+    Open your browser console to see Pyodide output
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        console.log(pyodide.runPython(`
+            import sys
+            sys.version
+        `));
+        pyodide.globals.set("x", 2);
+        pyodide.runPython(`
+        print(x+1)
+        `);    
+        
+        let x = pyodide.globals.get("x");
+        console.log(x*5);
+      }
+      main();
+    </script>
+  </body>
+</html>

@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js"></script>
+  </head>
+  <body>
+    Pyodide test page <br>
+    Open your browser console to see Pyodide output
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        console.log(pyodide.runPython(`
+            import sys
+            sys.version
+        `));
+        let test = pyodide.runPython(`
+        def test(x):
+          return [n*n for n in x]
+        test    
+        `);
+
+        let result_py = test([1,2,3,4]);    // 파이썬 결과
+        let result_js = result_py.toJs();   // 파이썬을 자바스크립트로 변환 
+        result_py.destroy();                // 메모리 누수를 막기위해 명시적으로 제거해야 함. 
+        console.log(result_js);
+
+        let test2 = pyodide.runPython(`
+        from pyodide.ffi import to_js
+        def test(x, *, offset):
+            return to_js([n*n + offset for n in x])
+        to_js(test)     
+        `)
+        let result = test2.callKwargs([1,2,3,4], { offset : 7});
+        console.log(result);
+      }
+      main();
+    </script>
+  </body>
+</html>
