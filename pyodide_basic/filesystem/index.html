@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+      <script src="https://cdn.jsdelivr.net/pyodide/v0.22.0/full/pyodide.js"></script>
+  </head>
+  <body>
+    Pyodide test page <br>
+    Open your browser console to see Pyodide output
+    <script type="text/javascript">
+      async function main(){
+        let pyodide = await loadPyodide();
+        console.log(pyodide.runPython(`
+            import sys
+            sys.version
+        `));
+        pyodide.runPython(`
+import importlib
+from pathlib import Path
+Path("mymodule.py").write_text("""\
+def hello():
+  print("hello world!")
+"""
+)
+importlib.invalidate_caches() # Make sure Python notices the new .py file
+from mymodule import hello
+hello()
+        `);
+      }
+      main();
+    </script>
+  </body>
+</html>
