@@ -18,6 +18,7 @@
     await pyodide.loadPackage(["micropip", "pytest"]);
     const micropip = pyodide.pyimport("micropip");   
     await micropip.install("pytest_pyodide");
+
     await micropip.install("https://files.pythonhosted.org/packages/7f/11/a8fc909670d79edabb8a8960beed19706d1773d5caf7e89354cb6977dc28/pytest_pyodide-0.50.0-py3-none-any.whl");
     pyodide.runPython(`    
 from pytest_pyodide import run_in_pyodide
