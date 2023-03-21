@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>pytest 예제</title>
-  <script src="https://cdn.jsdelivr.net/pyodide/v0.21.0/full/pyodide.js"></script>
+  <script src="https://cdn.jsdelivr.net/pyodide/v0.22.1/full/pyodide.js"></script>
   <script>
     async function main() {
     let pyodide = await loadPyodide();
@@ -16,6 +16,7 @@
       `)
     );
     await pyodide.loadPackage(["micropip", "pytest"]);
+<<<<<<< HEAD
     const micropip = await pyodide.pyimport("micropip");   
     //await micropip.install("https://files.pythonhosted.org/packages/72/1d/00bf2e736b19224ca07ce810a272f4cd7d6f1c91c18123ff621fa413531a/pytest_pyodide-0.21.0-py3-none-any.whl");
     //await micropip.install("https://files.pythonhosted.org/packages/7f/11/a8fc909670d79edabb8a8960beed19706d1773d5caf7e89354cb6977dc28/pytest_pyodide-0.50.0-py3-none-any.whl");
@@ -31,6 +32,17 @@ def test_zero_division_1():
 def test_zero_division_2():
     with pytest.raises(ZeroDivisionError):
         1 / 2
+=======
+    const micropip = pyodide.pyimport("micropip");   
+    await micropip.install("pytest_pyodide");
+
+    await micropip.install("https://files.pythonhosted.org/packages/7f/11/a8fc909670d79edabb8a8960beed19706d1773d5caf7e89354cb6977dc28/pytest_pyodide-0.50.0-py3-none-any.whl");
+    pyodide.runPython(`    
+from pytest_pyodide import run_in_pyodide
+@run_in_pyodide
+def test_add(selenium):
+    assert 1 + 1 == 2
+>>>>>>> b60491d90d45a2e844fae61206fa1170d1f495f0
       `);
     }
     main();
