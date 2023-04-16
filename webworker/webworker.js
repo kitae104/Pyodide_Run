@@ -4,7 +4,7 @@ importScripts("https://cdn.jsdelivr.net/pyodide/dev/full/pyodide.js");
 
 async function loadPyodideAndPackages() {
   self.pyodide = await loadPyodide();
-  await self.pyodide.loadPackage(["numpy", "pytz"]);
+  await self.pyodide.loadPackage(["numpy", "pytz", "pytest"]);
 }
 let pyodideReadyPromise = loadPyodideAndPackages();
 
