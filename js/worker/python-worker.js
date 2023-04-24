@@ -77,10 +77,11 @@ const initialise = async () => {
 
 
   // 패키지 로딩
-  await pyodide.loadPackage(["pandas", "micropip", "numpy", "beautifulsoup4", "matplotlib", "scikit-learn"]);
+  await pyodide.loadPackage(["pandas", "micropip", "numpy", "beautifulsoup4", "matplotlib", "scikit-learn" ]);
   const micropip = pyodide.pyimport("micropip");   
   await micropip.install("pyodide_http");
   await micropip.install("requests");
+  await micropip.install("wordcloud");
   
   //await micropip.install("https://files.pythonhosted.org/packages/ca/91/6d9b8ccacd0412c08820f72cebaa4f0c0441b5cda699c90f618b6f8a1b42/requests-2.28.1-py3-none-any.whl");
   //await micropip.install("https://files.pythonhosted.org/packages/d1/cb/4783c8f1a90f89e260dbf72ebbcf25931f3a28f8f80e2e90f8a589941b19/urllib3-1.26.11-py2.py3-none-any.whl");
