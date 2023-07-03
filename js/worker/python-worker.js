@@ -122,13 +122,10 @@ const initialise = async () => {
   });
 
   // 패키지 로딩
-  await pyodide.loadPackage(["pandas", "micropip", "pytest"]);
+  await pyodide.loadPackage(["pandas", "micropip"]);
   const micropip = pyodide.pyimport("micropip");
-  await micropip.install("https://files.pythonhosted.org/packages/10/5b/0479d7d845b5ba410ca702ffcd7f2cd95a14a4dfff1fde2637802b258b9b/seaborn-0.11.2-py3-none-any.whl");
-
-  // pandastutor
-  //const pandastutor_py = await pyodide.pyimport("pandas_tutor.main");
-
+  await micropip.install("https://files.pythonhosted.org/packages/6a/94/a59521de836ef0da54aaf50da6c4da8fb4072fb3053fa71f052fd9399e7a/openpyxl-3.1.2-py2.py3-none-any.whl");
+  
   postMessage({
     type: "ready",
   });
