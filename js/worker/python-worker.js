@@ -123,9 +123,8 @@ const initialise = async () => {
 
   // 패키지 로딩
   await pyodide.loadPackage(["pandas", "micropip"]);
-  const micropip = pyodide.pyimport("micropip");
-  await micropip.install("https://files.pythonhosted.org/packages/6a/94/a59521de836ef0da54aaf50da6c4da8fb4072fb3053fa71f052fd9399e7a/openpyxl-3.1.2-py2.py3-none-any.whl");
-  
+  const micropip = pyodide.pyimport("micropip");  
+  await micropip.install('https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl');
   postMessage({
     type: "ready",
   });
