@@ -1,0 +1,74 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+   <head>
+      <title>JavaScript Turtle Graphics</title>
+      <link type="text/css" rel="stylesheet" href="lib/turtle.css" />
+      <meta charset="utf-8">
+   </head>
+   <body>
+      <div id="wrap">
+         <h1>JavaScript Turtle Graphics</h1>
+         <div id="midcolumn">
+            <h4>캔버스(Canvas) <span id="coords"></span></h4>
+            <canvas id="turtlecanvas" width="700" height="700"></canvas>
+            <canvas id="imagecanvas" width="700" height="700" style="display:none"></canvas>
+            <span id="message" class="message-hide">Coordinates has been copied to clipboard</span>
+         </div> <!-- midcolumn -->
+         <div id="rightcolumn">
+            <h3>-코드-</h3>
+            <textarea id="code" rows="15">
+               showGrid(50);
+               setSpeed(500);
+               width(5);
+               color("blue");
+               forward(120);
+            </textarea><br \>
+            <button onclick="runCode()">실행</button>
+            <h3>-사용 함수-</h3>
+            <code>
+              showGrid(step) <br/>
+              forward(distance) <br/>
+              right(angle) <br/>
+              left(angle) <br/>
+              goto(x,y) <br/>
+              penup() <br/>
+              pendown() <br/>
+              angle(angle) <br/>
+              width(width) <br/>
+              color(r,g,b)  <br/> 
+              color([r,g,b])  <br/> 
+              color("#hexcolor")  <br/> 
+              color("name") <br/>              
+              showTurtle() <br/> 
+              <!--redrawOnMove(bool) <br/>
+              draw() <br/> 
+              repeat(n, action) <br/> 
+              wrap(bool) <br/> 
+              animate(action,ms) <br/>  -->             
+            </code>
+            
+            <h3>-색상표-</h3>
+            <div class="colours" style="background-color:rgb(231, 76, 60)">231, 76, 60</div>
+            <div class="colours" style="background-color:rgb(34, 153, 84)">34, 153, 84</div>
+            <div class="colours" style="background-color:rgb(243, 156, 18)">243, 156, 18</div>
+            <div class="colours" style="background-color:rgb(36, 113, 163)">36, 113, 163</div>
+            <div class="colours" style="background-color:rgb(142, 68, 173)">142, 68, 173</div>
+            <div class="colours" style="background-color:rgb(211, 84, 0)">211, 84, 0</div>
+            <div class="colours" style="background-color:rgb(39, 55, 70)">39, 55, 70</div>
+            <br>
+            <a href="http://htmlcolorcodes.com/color-chart/" target="_blank" class="doc-link">색상 더 보기 »</a>
+
+         </div> <!-- rightcolumn -->
+      </div> <!-- wrap-->
+      <script type="text/javascript" src="lib/library.js"></script>
+      <script type="text/javascript" src="functions.js"></script>
+      <script>
+         function runCode() {
+            var code = document.getElementById("code").value;
+            console.log(code);
+            eval(code);
+         }
+         
+      </script>
+   </body>
+</html>
