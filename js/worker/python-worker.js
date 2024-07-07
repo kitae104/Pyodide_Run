@@ -125,8 +125,8 @@ const initialise = async () => {
 
   // 패키지 로딩
   await pyodide.loadPackage(["pandas", "micropip", "requests"]);
-  const micropip = pyodide.pyimport("micropip");  
-  await micropip.install('https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl');
+  // const micropip = pyodide.pyimport("micropip");  
+  // await micropip.install('https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl');
   postMessage({
     type: "ready",
   });
