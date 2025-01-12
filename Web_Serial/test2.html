@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pyodide with WebSerial (COM3)</title>
+    <script type="module">
+        import { connectSerial } from "./connectSerial.js";
+        import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.23.0/full/pyodide.mjs";
+
+        let pyodide;
+
+        async function main() {
+            pyodide = await loadPyodide();
+            console.log("Pyodide loaded");
+
+            // JavaScript 함수를 Pyodide로 노출
+            self.connectSerial = connectSerial;
+
+            // 사용자 클릭 시 직렬 연결 실행
+            document.getElementById("connectButton").addEventListener("click", async () => {
+                await pyodide.runPythonAsync(`
+from js import connectSerial
+await connectSerial()
+`);
+            });
+        }
+
+        main();
+    </script>
+</head>
+<body>
+    <h1>Pyodide WebSerial 예제</h1>
+    <button id="connectButton">시리얼 포트 연결</button>
+    
+</body>
+</html>

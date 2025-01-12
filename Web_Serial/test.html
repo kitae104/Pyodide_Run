@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pyodide Serial Communication</title>
+    <script type="module">
+        import { connectSerial, sendData, readData, closeSerial } from "./connectSerial.js";
+        import { loadPyodide } from "https://cdn.jsdelivr.net/pyodide/v0.23.0/full/pyodide.mjs";
+
+        let pyodide;
+
+        async function main() {
+            pyodide = await loadPyodide();
+            console.log("Pyodide loaded");
+
+            // JavaScript 함수를 Pyodide에 노출
+            self.connectSerial = connectSerial;
+            self.sendData = sendData;
+            self.closeSerial = closeSerial;
+
+            // 데이터 읽기를 위한 콜백 설정
+            readData((data) => {
+                console.log(`Processing in Pyodide: ${data}`);
+                pyodide.runPython(`
+print("Received from Micro:bit:", "${data}")
+`);
+            });
+        }
+
+        main();
+    </script>
+</head>
+<body>
+    <h1>Pyodide Serial Communication</h1>
+    <button id="connectButton">Connect Serial</button>
+    <button id="sendButton">Send Data</button>
+    <button id="closeButton">Close Serial</button>
+    <script>
+        document.getElementById("connectButton").addEventListener("click", async () => {
+            await connectSerial();
+        });
+
+        document.getElementById("sendButton").addEventListener("click", async () => {
+            const dataToSend = prompt("전송할 데이터:");
+            await sendData(dataToSend);
+        });
+
+        document.getElementById("closeButton").addEventListener("click", async () => {
+            await closeSerial();
+        });
+    </script>
+</body>
+</html>
